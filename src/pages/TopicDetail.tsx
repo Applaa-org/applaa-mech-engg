@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from '@tanstack/react-router';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, BookCheck } from 'lucide-react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,6 +9,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 const TopicDetailPage = () => {
   const topic = useLoaderData({ from: '/topics/$topicSlug' });
@@ -18,6 +24,12 @@ const TopicDetailPage = () => {
     Intermediate: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-300 dark:border-yellow-800',
     Advanced: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/50 dark:text-red-300 dark:border-red-800',
   };
+
+  const assignmentDifficultyColors = {
+    Easy: 'text-green-600 dark:text-green-400',
+    Medium: 'text-yellow-600 dark:text-yellow-400',
+    Hard: 'text-red-600 dark:text-red-400',
+  }
 
   return (
     <div className="container max-w-4xl mx-auto py-12">
@@ -55,6 +67,30 @@ const TopicDetailPage = () => {
         <div dangerouslySetInnerHTML={{ __html: topic.content }} />
       </article>
       
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold flex items-center mb-4">
+          <BookCheck className="mr-3 h-6 w-6 text-primary" />
+          Assignments
+        </h2>
+        <Accordion type="single" collapsible className="w-full">
+          {topic.assignments.map((assignment) => (
+            <AccordionItem value={`item-${assignment.id}`} key={assignment.id}>
+              <AccordionTrigger>
+                <div className="flex justify-between w-full pr-4 items-center">
+                  <span>{assignment.title}</span>
+                  <span className={`text-sm font-semibold ${assignmentDifficultyColors[assignment.difficulty]}`}>
+                    {assignment.difficulty}
+                  </span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <p className="text-muted-foreground">{assignment.description}</p>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+
       <div className="mt-12">
         <h3 className="text-lg font-semibold mb-4">Tags</h3>
         <div className="flex flex-wrap gap-2">
